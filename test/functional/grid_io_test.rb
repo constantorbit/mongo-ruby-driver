@@ -193,7 +193,7 @@ class GridIOTest < Test::Unit::TestCase
       end
 
       should "validate with a large file" do
-        io = File.open(File.join(TEST_DATA, 'sample_file.pdf'), 'r')
+        io = File.open(File.join($TEST_DATA, 'sample_file.pdf'), 'r')
         file = GridIO.new(@files, @chunks, 'bigfile', 'w')
         file.write(io)
         assert file.close
@@ -201,7 +201,7 @@ class GridIOTest < Test::Unit::TestCase
       end
 
       should "raise an exception when check fails" do
-        io = File.open(File.join(TEST_DATA, 'sample_file.pdf'), 'r')
+        io = File.open(File.join($TEST_DATA, 'sample_file.pdf'), 'r')
         @db.stubs(:command).returns({'md5' => '12345'})
         file = GridIO.new(@files, @chunks, 'bigfile', 'w')
         file.write(io)

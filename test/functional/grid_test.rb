@@ -1,8 +1,10 @@
 require 'test_helper'
 include Mongo
 
+TEST_DATA = File.join(File.dirname(__FILE__), 'data') 
+
 def read_and_write_stream(filename, read_length, opts={})
-  io   = File.open(File.join(TEST_DATA, filename), 'r+b')
+  io   = File.open(File.join($TEST_DATA, filename), 'r+b')
   id   = @grid.put(io, opts.merge!(:filename => filename + read_length.to_s))
   file = @grid.get(id)
   io.rewind
@@ -57,6 +59,12 @@ class GridTest < Test::Unit::TestCase
       should "check existence" do
         file = @grid.exist?(:filename => 'sample')
         assert_equal 'sample', file['filename']
+      end
+      
+      should "not be able to overwrite an exising file" do
+        assert_raise GridError do
+          @grid.put(@data, :filename => 'sample', :_id => @id)
+        end
       end
 
       should "return nil if it doesn't exist" do
@@ -164,7 +172,7 @@ class GridTest < Test::Unit::TestCase
       setup do
         @grid = Grid.new(@db, 'test-fs')
         filename = 'sample_data'
-        @io   = File.open(File.join(TEST_DATA, filename), 'r')
+        @io   = File.open(File.join($TEST_DATA, filename), 'r')
         id    = @grid.put(@io, :filename => filename)
         @file = @grid.get(id)
         @io.rewind
@@ -197,7 +205,7 @@ class GridTest < Test::Unit::TestCase
       setup do
         @grid = Grid.new(@db, 'test-fs')
         filename = 'empty_data'
-        @io   = File.open(File.join(TEST_DATA, filename), 'r')
+        @io   = File.open(File.join($TEST_DATA, filename), 'r')
         id = silently do
           @grid.put(@io, :filename => filename)
         end
