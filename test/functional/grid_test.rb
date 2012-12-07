@@ -60,8 +60,8 @@ class GridTest < Test::Unit::TestCase
         file = @grid.exist?(:filename => 'sample')
         assert_equal 'sample', file['filename']
       end
-      
-      should "not be able to overwrite an exising file" do
+
+      should "not be able to overwrite an existing file" do
         assert_raise GridError do
           @grid.put(@data, :filename => 'sample', :_id => @id)
         end
