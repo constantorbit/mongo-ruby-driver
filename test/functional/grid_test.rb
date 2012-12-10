@@ -1,8 +1,6 @@
 require 'test_helper'
 include Mongo
 
-TEST_DATA = File.join(File.dirname(__FILE__), 'data') 
-
 def read_and_write_stream(filename, read_length, opts={})
   io   = File.open(File.join($TEST_DATA, filename), 'r+b')
   id   = @grid.put(io, opts.merge!(:filename => filename + read_length.to_s))
