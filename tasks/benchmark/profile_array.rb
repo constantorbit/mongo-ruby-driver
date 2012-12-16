@@ -5,10 +5,9 @@ def set_mongo_driver_mode(mode)
   case mode
     when :c
       ENV.delete('TEST_MODE')
-      ENV['C_EXT'] = 'TRUE'
     when :ruby
-      ENV['TEST_MODE'] = 'TRUE'
-      ENV.delete('C_EXT')
+      ENV['TEST_MODE']        = 'TRUE'
+      ENV['BSON_DISABLE_EXT'] = 'TRUE'
     else
       raise 'mode must be :c or :ruby'
   end

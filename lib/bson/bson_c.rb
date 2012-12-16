@@ -16,6 +16,8 @@
 # limitations under the License.
 # ++
 
+require 'bson/cbson'
+
 # A thin wrapper for the CBson class
 module BSON
   class BSON_C

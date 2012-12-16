@@ -76,13 +76,9 @@ Note that if you're on 1.8.7, be sure that you're using a patchlevel >= 249. The
     $ gem update --system
     $ gem install mongo
 
-For a significant performance boost, you'll want to install the C extension:
+By default, native extensions (Java and C) will be installed and used by the BSON gem. If you'd like to disable these extensions and use the pure Ruby implementation you can do so via an environment variable:
 
-    $ gem install bson_ext
-
-Note that bson_ext isn't used with JRuby. Instead, we use some native Java extensions are bundled with the bson gem. If you ever need to modify these extensions, you can recompile with the following rake task:
-
-    $ rake compile:jbson
+    export BSON_DISABLE_EXT=true
 
 ### From the GitHub source
 
@@ -306,11 +302,7 @@ To run all default test suites, just type:
 
     $ rake test
 
-If you have the source code, you can run the tests.  Skip this test with the C extension if you're running JRuby.
-
-    $ rake test:c
-
-If you want to test the basic Ruby encoder, without the C extension, or if you're running JRuby:
+If you want to test the pure Ruby implementation, without native extensions, just run the followin rake command:
 
     $ rake test:ruby
 
@@ -319,9 +311,9 @@ These will run both unit and functional tests. To run these tests alone:
     $ rake test:unit
     $ rake test:functional
 
-To run any individual rake tasks with the C extension enabled, just pass C_EXT=true to the task (don't do this with JRuby):
+Native extensions are on by default, but to run any individual rake tasks without native extensions, just pass BSON_DISABLE_EXT=true to the task:
 
-    $ rake test:unit C_EXT=true
+    $ rake test:unit BSON_DISABLE_EXT=true
 
 If you want to test replica set, you can run the following task:
 
@@ -339,7 +331,7 @@ To run a single test from its subdirectory, add -I.. since we no longer modify L
 
     $ ruby -I.. -I../../lib bson_test.rb
 
-To fix the following error on Mac OS X - "/.../lib/bson_ext/cbson.bundle: [BUG] Segmentation fault":
+To fix the following error on Mac OS X - "/.../lib/bson/cbson.bundle: [BUG] Segmentation fault":
 
     $ rake compile
 

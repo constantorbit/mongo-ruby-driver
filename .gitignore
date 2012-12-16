@@ -18,7 +18,7 @@ docs
 ext/cbson/Makefile
 ext/jbson/target/java
 Gemfile.lock
-lib/bson_ext
+lib/bson/cbson.bundle
 lib/mongo_ext/Makefile
 nbproject
 tasks/benchmark/exp_series_suite_*.js

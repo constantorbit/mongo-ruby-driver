@@ -48,36 +48,27 @@ module BSON
   end
 end
 
-if RUBY_PLATFORM =~ /java/
+# If JRuby and extensions are enabled, load the java extensions
+if RUBY_PLATFORM =~ /java/ && !ENV['BSON_DISABLE_EXT']
   require 'bson/bson_java'
   module BSON
     BSON_CODER = BSON_JAVA
   end
 else
-  begin
-    # Need this for running test with and without c ext in Ruby 1.9.
-    raise LoadError if ENV['TEST_MODE'] && !ENV['C_EXT']
-
-    # Raise LoadError unless little endian, since the C extensions
-    # only work on little-endian architectures.
-    raise LoadError unless "\x01\x00\x00\x00".unpack("i").first == 1
-
-    require 'bson_ext/cbson'
-    raise LoadError unless defined?(CBson::VERSION)
+  # Skip C-extension if big endian or extensions are disabled
+  if "\x01\x00\x00\x00".unpack("i").first != 1 && !ENV['BSON_DISABLE_EXT']
     require 'bson/bson_c'
     module BSON
       BSON_CODER = BSON_C
     end
-  rescue LoadError
+  else
     require 'bson/bson_ruby'
     module BSON
       BSON_CODER = BSON_RUBY
     end
     unless ENV['TEST_MODE']
-      warn "\n**Notice: C extension not loaded. This is required for optimum MongoDB Ruby driver performance."
-      warn "  You can install the extension as follows:\n  gem install bson_ext\n"
-      warn "  If you continue to receive this message after installing, make sure that the"
-      warn "  bson_ext gem is in your load path and that the bson_ext and mongo gems are of the same version.\n"
+      warn "\nNotice: BSON native extension was not loaded. This is required for optimum MongoDB Ruby driver performance."
+      warn "  Re-enable the BSON extension with:\n  ENV['BSON_DISABLE_EXT'] = false\n"
     end
   end
 end

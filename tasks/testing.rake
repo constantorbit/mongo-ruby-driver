@@ -10,15 +10,15 @@ namespace :test do
 
   RSpec::Core::RakeTask.new(:spec)
 
-  desc "Run default test suites with the BSON C-extension enabled."
-  task :c do
-    ENV['C_EXT'] = 'TRUE'
-    Rake::Task['compile:cbson'].invoke
+  desc "Run default test suites with the BSON extensions enabled."
+  task :ext do
+    Rake::Task['compile'].invoke
     Rake::Task['test:ruby'].invoke
-    ENV['C_EXT'] = nil
   end
+  task :c     => ['test:ext']
+  task :jruby => ['test:ext']
 
-  desc "Runs default test suites"
+  desc "Runs default test suites (extensions disabled)"
   task :ruby do
     if RUBY_VERSION >= "1.9.0" && RUBY_ENGINE == 'ruby'
       if ENV['COVERAGE']
@@ -31,8 +31,10 @@ namespace :test do
       end
     end
 
+    ENV['BSON_DISABLE_EXT'] = 'TRUE'
     DEFAULT_TESTS.each { |t| Rake::Task["test:#{t}"].invoke }
     Rake::Task['test:cleanup'].invoke
+    ENV['BSON_DISABLE_EXT'] = nil
   end
 
   %w(sharded_cluster unit threading auxillary bson tools).each do |suite|

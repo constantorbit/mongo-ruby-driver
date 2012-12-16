@@ -14,10 +14,12 @@ Gem::Specification.new do |s|
   s.files             += Dir['lib/bson/**/*.rb']
 
   if RUBY_PLATFORM =~ /java/
-    s.platform = 'java'
-    s.files    += ['ext/jbson/target/jbson.jar', 'ext/jbson/lib/java-bson.jar']
+    s.platform        = 'java'
+    s.files           += ['ext/jbson/target/jbson.jar', 'ext/jbson/lib/java-bson.jar']
   else
-    s.platform = Gem::Platform::RUBY
+    s.platform        = Gem::Platform::RUBY
+    s.files           += Dir.glob('ext/**/*.{c,h,rb}')
+    s.extensions      = ['ext/cbson/extconf.rb']
   end
 
   s.test_files        = Dir['test/bson/*.rb']
