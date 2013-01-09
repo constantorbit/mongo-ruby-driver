@@ -396,7 +396,8 @@ module Mongo
     #   it's run on the server.
     #
     # @return [String] the return value of the function.
-    def eval(code, *args)
+    def eval(params = {}, *args)
+      code = yield if block_given?
       if not code.is_a? BSON::Code
         code = BSON::Code.new(code)
       end
@@ -404,6 +405,7 @@ module Mongo
       oh = BSON::OrderedHash.new
       oh[:$eval] = code
       oh[:args]  = args
+      oh.merge!(params)
       doc = command(oh)
       doc['retval']
     end
