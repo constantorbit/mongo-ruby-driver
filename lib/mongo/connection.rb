@@ -413,14 +413,17 @@ module Mongo
     #
     # @raise [ConnectionFailure] if unable to connect to any host or port.
     def connect_to_master
+      puts "connect_to_master: Starting"
       close
       @host = @port = nil
       for node_pair in @nodes
+        puts "connect_to_master: Trying node_pair #{node_pair}"
         host, port = *node_pair
         begin
           socket = TCPSocket.new(host, port)
           socket.setsockopt(Socket::IPPROTO_TCP, Socket::TCP_NODELAY, 1)
 
+          puts "connect_to_master: got connected"
           # If we're connected to master, set the @host and @port
           result = self['admin'].command({:ismaster => 1}, :check_response => false, :sock => socket)
           if Mongo::Support.ok?(result) &&
@@ -437,8 +440,9 @@ module Mongo
 
           break if is_master || @slave_ok
         rescue SocketError, SystemCallError, IOError => ex
+          puts "connect_to_master: exception #{e}"
           close
-          false
+            false
         ensure
           socket.close if socket
         end
