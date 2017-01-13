@@ -440,7 +440,7 @@ module Mongo
 
           break if is_master || @slave_ok
         rescue SocketError, SystemCallError, IOError => ex
-          puts "connect_to_master: exception #{e}"
+          puts "connect_to_master: exception #{ex}"
           close
             false
         ensure
@@ -502,6 +502,7 @@ module Mongo
     #
     # @private
     def parse_uri(string)
+      puts "parse_uri: parsing #{string}"
       if string =~ /^mongodb:\/\//
         string = string[10..-1]
       else
